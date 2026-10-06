@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>КТО ПО ЖИЗНИ — социальная сеть</title>
+<style>
+:root{
+  --bg:#070707; --panel:#111; --panel2:#171717; --line:#292929;
+  --red:#8e1118; --red2:#b51c26; --gold:#c7a454;
+  --text:#eee; --muted:#888; --green:#48a868;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% -10%,#252525 0,#0b0b0b 35%,#050505 75%);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background-image:linear-gradient(115deg,transparent 0 48%,#fff 49%,transparent 50%),linear-gradient(35deg,transparent 0 48%,#fff 49%,transparent 50%);background-size:95px 95px;mix-blend-mode:overlay}
+a{color:inherit;text-decoration:none}
+button{font:inherit}
+.top{height:68px;position:sticky;top:0;z-index:10;background:rgba(8,8,8,.94);backdrop-filter:blur(12px);border-bottom:1px solid #252525;display:flex;align-items:center;padding:0 28px}
+.logo{font-weight:950;letter-spacing:3px;font-size:22px;text-shadow:0 2px 0 #000}
+.logo span{color:var(--red2)}
+.nav{margin-left:auto;display:flex;gap:8px}
+.nav button{border:1px solid #303030;background:#111;color:#bbb;border-radius:8px;padding:9px 13px;cursor:pointer}
+.nav button.active,.nav button:hover{color:#fff;border-color:#6f171d;background:#1a0d0e}
+.wrap{max-width:1250px;margin:auto;padding:28px 18px 90px}
+.hero{position:relative;overflow:hidden;border:1px solid #303030;border-radius:16px;min-height:255px;background:
+linear-gradient(90deg,rgba(0,0,0,.9),rgba(0,0,0,.45)),linear-gradient(135deg,#242424,#111 45%,#330b0e);box-shadow:0 18px 60px #000}
+.hero:after{content:"";position:absolute;width:520px;height:520px;border-radius:50%;right:-160px;top:-180px;border:80px solid rgba(142,17,24,.18);box-shadow:0 0 0 35px rgba(199,164,84,.04)}
+.heroText{position:relative;z-index:2;padding:42px;max-width:700px}
+.kicker{color:#aaa;text-transform:uppercase;letter-spacing:4px;font-size:11px}
+h1{font-size:clamp(42px,7vw,82px);line-height:.9;margin:12px 0;text-transform:uppercase;letter-spacing:2px;text-shadow:5px 6px 0 #000}
+.hero p{color:#bbb;font-size:17px;max-width:560px}
+.cta{background:linear-gradient(180deg,var(--red2),#680b11);border:1px solid #d13a43;color:white;border-radius:8px;padding:12px 18px;font-weight:bold;cursor:pointer;box-shadow:0 8px 25px #000}
+.layout{display:grid;grid-template-columns:280px minmax(0,1fr) 300px;gap:18px;margin-top:18px}
+.card{background:linear-gradient(180deg,#151515,#0f0f0f);border:1px solid var(--line);border-radius:13px;box-shadow:0 12px 35px #000;padding:18px}
+.card h3{margin:0 0 14px;font-size:13px;text-transform:uppercase;letter-spacing:2px;color:#bbb}
+.profile{text-align:center}
+.avatar{width:96px;height:96px;border-radius:50%;margin:0 auto 12px;border:3px solid #252525;background:radial-gradient(circle at 35% 25%,#555,#222 38%,#0c0c0c 70%);display:flex;align-items:center;justify-content:center;font-size:37px;font-weight:900;box-shadow:0 0 0 5px #0b0b0b}
+.name{font-size:20px;font-weight:800}
+.status{display:inline-flex;align-items:center;gap:6px;margin:7px 0 12px;padding:5px 9px;border:1px solid #67572d;border-radius:99px;color:#e0c77d;background:#211d11;font-size:11px;font-weight:bold}
+.dot{width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block}
+.sideBtn{width:100%;padding:10px;margin-top:7px;border:1px solid #333;background:#171717;color:#ddd;border-radius:7px;cursor:pointer}
+.sideBtn:hover{border-color:#8e1118}
+.chat{min-height:470px;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.chatHead{padding:17px 18px;border-bottom:1px solid #282828;display:flex;align-items:center;justify-content:space-between}
+.chatHead strong{font-size:18px}.online{color:#68b67d;font-size:12px}
+.messages{padding:18px;display:flex;flex-direction:column;gap:13px;flex:1}
+.msg{max-width:78%;display:flex;gap:9px}
+.msg.me{align-self:flex-end;flex-direction:row-reverse}
+.mini{width:34px;height:34px;flex:0 0 34px;border-radius:50%;background:#282828;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold}
+.bubble{background:#191919;border:1px solid #292929;border-radius:10px;padding:9px 12px;color:#ddd}
+.me .bubble{background:#341014;border-color:#5e2025}
+.meta{font-size:10px;color:#777;margin-bottom:3px}.bubble p{margin:0;line-height:1.35}
+.composer{border-top:1px solid #282828;padding:12px;display:flex;gap:8px}
+.composer input{flex:1;background:#090909;border:1px solid #303030;color:#fff;border-radius:8px;padding:11px}
+.composer button{background:#8e1118;border:0;color:white;border-radius:8px;padding:0 16px;cursor:pointer}
+.friend{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #232323}
+.friend:last-child{border:0}.friend .mini{background:linear-gradient(135deg,#333,#111)}
+.friend small{display:block;color:#777;margin-top:2px}
+.crown{color:var(--gold);font-size:17px}
+.support{border-color:#594b29;background:linear-gradient(180deg,#1e1a11,#14120d)}
+.support p{font-size:13px;color:#aaa;line-height:1.4}
+.rank{display:flex;align-items:center;gap:10px;margin:11px 0}
+.rankBadge{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#272727;border:1px solid #444;color:#ddd;font-weight:bold}
+.rank:nth-child(3) .rankBadge{color:var(--gold);border-color:#6a592d}
+.feed{margin-top:18px}
+.post{background:#111;border:1px solid #292929;border-radius:12px;padding:17px;margin-top:12px}
+.postTop{display:flex;gap:10px;align-items:center}.postTop b{font-size:14px}.postTop small{color:#777}
+.post p{color:#ccc;line-height:1.5}.actions{display:flex;gap:18px;color:#777;font-size:12px}
+
+.ad{margin-top:14px;padding:0;overflow:hidden}
+.adLabel{padding:11px 14px 8px;color:#666;font-size:9px;letter-spacing:2px;text-transform:uppercase}
+.adImage{height:145px;background:
+linear-gradient(135deg,rgba(0,0,0,.18),rgba(0,0,0,.65)),
+radial-gradient(circle at 75% 30%,#8e1118 0 7%,transparent 8%),
+linear-gradient(145deg,#3a3a3a 0 18%,#1c1c1c 18% 42%,#2b1719 42% 62%,#111 62%);
+display:flex;align-items:flex-end;padding:14px;font-weight:900;letter-spacing:2px;font-size:19px;text-shadow:2px 2px 0 #000}
+.adBody{padding:12px 14px 14px}
+.adTitle{font-weight:800;font-size:15px;margin-bottom:5px}
+.adText{font-size:12px;line-height:1.4;color:#888;margin-bottom:11px}
+.adBtn{display:block;text-align:center;background:#8e1118;border:1px solid #b82a32;color:#fff;border-radius:7px;padding:9px;font-size:12px;font-weight:bold}
+.adBtn:hover{background:#b51c26}
+
+
+
+.profilePage{display:none;position:fixed;inset:0;z-index:90;overflow:auto;background:#080808;padding:24px}
+.profilePage.show{display:block}
+.profileWrap{max-width:1050px;margin:0 auto}
+.profileBack{display:inline-flex;align-items:center;gap:8px;background:#151515;border:1px solid #2c2c2c;color:#aaa;border-radius:8px;padding:9px 13px;cursor:pointer;margin-bottom:16px}
+.profileCover{min-height:245px;border:1px solid #292929;border-radius:14px;background:linear-gradient(135deg,#171717 0%,#0b0b0b 55%,#25080b 100%);position:relative;overflow:hidden}
+.profileCover:after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0 55%,rgba(150,15,25,.15) 55% 58%,transparent 58% 100%);pointer-events:none}
+.profileIdentity{display:flex;align-items:flex-end;gap:18px;padding:0 24px 20px;margin-top:-66px;position:relative;z-index:2}
+
+.profileAvatarLarge{overflow:hidden}
+.profileAvatarLarge img{width:100%;height:100%;object-fit:cover;display:block}
+
+.profileAvatarLarge{width:132px;height:132px;border-radius:50%;background:#222;border:5px solid #0b0b0b;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:900;color:#eee;box-shadow:0 8px 30px #000}
+.profileIdentityText{padding-bottom:8px}
+.profileIdentityText h1{margin:0 0 5px;font-size:30px}
+.profileIdentityText p{margin:0;color:#888}
+.profileActions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.profileBtn{background:#171717;border:1px solid #333;color:#ddd;border-radius:8px;padding:10px 14px;cursor:pointer}
+.profileBtn.primary{background:#8e1118;border-color:#a51a23;color:#fff}
+.profileGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:18px}
+.profileCard{background:#111;border:1px solid #292929;border-radius:12px;padding:18px}
+.profileCard h3{margin:0 0 14px;text-transform:uppercase;font-size:12px;letter-spacing:1.4px;color:#aaa}
+.musicPlayer{display:flex;align-items:center;gap:12px;background:#181818;border-radius:9px;padding:12px}
+.playBtn{width:40px;height:40px;border-radius:50%;border:0;background:#9b1720;color:#fff;cursor:pointer}
+.musicInfo strong{display:block}.musicInfo span{font-size:11px;color:#777}
+.photoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.photoBox{aspect-ratio:1;background:#1b1b1b;border:1px solid #292929;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#555;font-size:12px}
+.friendList{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.friend{display:flex;align-items:center;gap:8px}.friendAvatar{width:36px;height:36px;border-radius:50%;background:#262626;display:flex;align-items:center;justify-content:center;font-weight:800}
+.wallPost{border-top:1px solid #292929;padding-top:14px;margin-top:14px}.wallPost p{color:#ccc;line-height:1.5;margin:7px 0}.wallMeta{font-size:11px;color:#666}
+.profileEdit{display:none;margin-top:12px}.profileEdit.show{display:block}
+.profileEdit input{width:100%;box-sizing:border-box;background:#090909;border:1px solid #333;color:#fff;border-radius:7px;padding:10px;margin-bottom:8px}
+@media(max-width:700px){
+ .profilePage{padding:12px}
+ .profileGrid{grid-template-columns:1fr}
+ .profileIdentity{align-items:center;flex-direction:column;text-align:center;margin-top:-55px}
+ .profileActions{margin-left:0;justify-content:center}
+ .profileAvatarLarge{width:110px;height:110px}
+ .profileCover{min-height:190px}
+}
+
+.authOverlay{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px}
+.authOverlay.show{display:flex}
+.authBox{width:min(420px,100%);background:linear-gradient(180deg,#181818,#0d0d0d);border:1px solid #343434;border-radius:15px;box-shadow:0 25px 90px #000;padding:24px}
+.authTop{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.authTop h2{margin:0;font-size:22px;letter-spacing:1px;text-transform:uppercase}
+.authClose{background:none;border:0;color:#777;font-size:24px;cursor:pointer}
+.authTabs{display:flex;border-bottom:1px solid #292929;margin-bottom:18px}
+.authTabs button{flex:1;background:none;border:0;border-bottom:2px solid transparent;color:#777;padding:10px;cursor:pointer}
+.authTabs button.active{color:#fff;border-color:#a81620}
+.authForm{display:none}.authForm.active{display:block}
+.field{margin-bottom:13px}.field label{display:block;color:#999;font-size:11px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.field input{width:100%;background:#090909;border:1px solid #333;color:#fff;border-radius:8px;padding:12px;outline:none}
+.field input:focus{border-color:#8e1118}
+.authSubmit{width:100%;margin-top:4px}
+.authNote{font-size:11px;color:#666;line-height:1.4;margin:12px 0 0}
+.authError{color:#df5961;font-size:12px;min-height:17px;margin-bottom:5px}
+.userTop{display:flex;align-items:center;gap:9px;margin-left:12px;font-size:12px;color:#aaa}
+.userMini{width:30px;height:30px;border-radius:50%;background:#272727;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
+.logoutBtn{background:none;border:1px solid #333;color:#aaa;border-radius:7px;padding:7px 9px;cursor:pointer}
+
+.mobileNav{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:230px minmax(0,1fr)}.right{display:none}}
+@media(max-width:700px){
+ .top{height:58px;padding:0 14px}.logo{font-size:17px;letter-spacing:2px}.nav{display:none}
+ .wrap{padding:12px 10px 80px}.hero{min-height:300px}.heroText{padding:30px 22px}h1{font-size:48px}.hero p{font-size:14px}
+ .layout{display:block}.left{display:none}.chat{margin-top:12px;min-height:520px}.feed{margin-top:12px}
+ .mobileNav{display:flex;position:fixed;z-index:20;bottom:0;left:0;right:0;background:#0d0d0d;border-top:1px solid #292929;height:62px;justify-content:space-around;align-items:center}
+ .mobileNav button{background:none;border:0;color:#888;font-size:11px}.mobileNav button:first-child{color:#fff}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">КТО <span>ПО ЖИЗНИ</span></div>
+  <nav class="nav">
+    <button class="active">Главная</button><button>Люди</button><button>Музыка</button><button>Сообщения</button>
+  </nav>
+  <div id="authArea">
+    <button class="nav active" style="margin-left:8px" onclick="openAuth('login')">Войти</button>
+  </div>
+</header>
+
+<main class="wrap">
+<section class="hero">
+  <div class="heroText">
+    <div class="kicker">своя площадка · свой разговор</div>
+    <h1>КТО<br><span style="color:#a81620">ПО ЖИЗНИ</span></h1>
+    <p>Место, где собираются свои люди. Общение, музыка, фотографии, истории и настоящий живой чат.</p>
+    <button class="cta" onclick="openAuth('register')">Зайти в движ</button>
+  </div>
+</section>
+
+<section class="layout">
+<aside class="left">
+  <div class="card profile">
+    <div class="avatar" id="profileAvatar">?</div>
+    <div class="name" id="profileName">Гость</div>
+    <div class="status"><span class="dot"></span> <span id="profileStatus">не авторизован</span></div>
+    <button class="sideBtn" onclick="openProfile()">Мой профиль</button>
+    <button class="sideBtn">Мои сообщения</button>
+    <button class="sideBtn">Друзья <span style="color:#777">(18)</span></button>
+  </div>
+  <div class="card support" style="margin-top:14px">
+    <h3>Поддержать проект</h3>
+    <p>Помоги «КТО ПО ЖИЗНИ» развиваться. За поддержку открываются статусы и короны.</p>
+    <button class="cta" style="width:100%" onclick="alert('Здесь подключим оплату картой')">Поддержать</button>
+  </div>
+</aside>
+
+<section>
+  <div class="card chat">
+    <div class="chatHead"><div><strong>Общий чат</strong><div class="online">● 127 человек онлайн</div></div><span style="color:#666">#общение</span></div>
+    <div class="messages" id="messages">
+      <div class="msg"><div class="mini">А</div><div><div class="meta">Андрюха · 21:42</div><div class="bubble"><p>Всем вечер добрый 👊</p></div></div></div>
+      <div class="msg"><div class="mini">М</div><div><div class="meta">Макс · 21:43</div><div class="bubble"><p>Здорово. Кто музыку новую заливал?</p></div></div></div>
+      <div class="msg me"><div class="mini">К</div><div><div class="meta">Костя · 21:44</div><div class="bubble"><p>Я вечером закину пару треков 🎵</p></div></div></div>
+      <div class="msg"><div class="mini">С</div><div><div class="meta">Серый · 21:45</div><div class="bubble"><p>Нормально. Тут главное — чтобы свои были.</p></div></div></div>
+    </div>
+    <form class="composer" onsubmit="send(event)">
+      <input id="input" placeholder="Написать сообщение..." autocomplete="off">
+      <button>➤</button>
+    </form>
+  </div>
+
+  <div class="feed">
+    <div class="post">
+      <div class="postTop"><div class="mini">К</div><div><b>Костя</b> <span class="crown">♛</span><br><small>Сегодня, 21:38</small></div></div>
+      <p>Вот примерно таким вижу наш первый вечерний движ. Потом добавим профили, музыку, фото и личку.</p>
+      <div class="actions">♡ 24 &nbsp;&nbsp; 💬 7 &nbsp;&nbsp; ↗ Поделиться</div>
+    </div>
+  </div>
+</section>
+
+<aside class="right">
+  <div class="card">
+    <h3>Люди онлайн</h3>
+    <div class="friend"><div class="mini">А</div><div><b>Андрюха</b><small><span class="dot"></span> в сети</small></div></div>
+    <div class="friend"><div class="mini">М</div><div><b>Макс</b><small><span class="dot"></span> в сети</small></div></div>
+    <div class="friend"><div class="mini">С</div><div><b>Серый</b><small><span class="dot"></span> в сети</small></div></div>
+    <div class="friend"><div class="mini">Р</div><div><b>Рома</b><small><span class="dot"></span> в сети</small></div></div>
+  </div>
+
+  <div class="card ad">
+    <div class="adLabel">Рекламное место</div>
+    <a href="https://example.com" target="_blank" rel="noopener noreferrer" aria-label="Тестовая реклама">
+      <div class="adImage">ТЕСТОВАЯ<br>РЕКЛАМА</div>
+    </a>
+    <div class="adBody">
+      <div class="adTitle">Ваш сайт здесь</div>
+      <div class="adText">Временный рекламный блок. Позже картинку, текст, ссылку и срок размещения будем менять из админки.</div>
+      <a class="adBtn" href="https://example.com" target="_blank" rel="noopener noreferrer">ПЕРЕЙТИ →</a>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>Люди, которые держат проект</h3>
+    <div class="rank"><div class="rankBadge">♛</div><div><b>Авторитет</b><small style="display:block;color:#777">поддержка 5 000+</small></div></div>
+    <div class="rank"><div class="rankBadge">♛</div><div><b>Старший</b><small style="display:block;color:#777">поддержка 500+</small></div></div>
+    <div class="rank"><div class="rankBadge">♛</div><div><b>Свой</b><small style="display:block;color:#777">поддержка 100+</small></div></div>
+  </div>
+</aside>
+</section>
+</main>
+
+
+
+<section class="profilePage" id="profilePage">
+  <div class="profileWrap">
+    <button class="profileBack" onclick="closeProfile()">← Назад на главную</button>
+
+    <div class="profileCover"></div>
+
+    <div class="profileIdentity">
+      <div>
+        <div class="profileAvatarLarge" id="pageAvatar">?</div>
+        <label class="profileBtn" style="display:block;text-align:center;margin-top:8px;cursor:pointer">
+          Загрузить аватар
+          <input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none" onchange="uploadAvatar(event)">
+        </label>
+      </div>
+      <div class="profileIdentityText">
+        <h1 id="pageNick">Гость</h1>
+        <p><span class="dot"></span> <span id="pageOnline">В сети</span> · <span id="pageDonor">Без статуса</span></p>
+      </div>
+      <div class="profileActions">
+        <button class="profileBtn primary" onclick="alert('В следующем этапе здесь будет список друзей')">Добавить в друзья</button>
+        <button class="profileBtn" onclick="alert('Личные сообщения будут подключены следующим этапом')">Написать</button>
+        <button class="profileBtn" onclick="toggleProfileEdit()">Редактировать</button>
+      </div>
+    </div>
+
+    <div class="profileEdit profileCard" id="profileEdit">
+      <h3>Редактирование профиля</h3>
+      <input id="editBio" maxlength="120" placeholder="Коротко о себе">
+      <button class="profileBtn primary" onclick="saveProfile()">Сохранить</button>
+    </div>
+
+    <div class="profileGrid">
+      <div>
+        <div class="profileCard">
+          <h3>О себе</h3>
+          <p id="pageBio" style="color:#aaa;line-height:1.5;margin:0">Пользователь «КТО ПО ЖИЗНИ».</p>
+        </div>
+
+        <div class="profileCard" style="margin-top:16px">
+          <h3>Музыка</h3>
+          <div class="musicPlayer">
+            <button class="playBtn" onclick="alert('Настоящий аудиоплеер подключим после загрузки музыки')">▶</button>
+            <div class="musicInfo"><strong>Трек пока не добавлен</strong><span>Добавим загрузку музыки на следующем этапе</span></div>
+          </div>
+        </div>
+
+        <div class="profileCard" style="margin-top:16px">
+          <h3>Стена</h3>
+          <div id="wallPostArea">
+            <div class="wallPost">
+              <div class="wallMeta" id="wallAuthor">Гость · сейчас</div>
+              <p id="wallText">Здесь появятся записи пользователя.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="profileCard">
+          <h3>Фотографии</h3>
+          <div class="photoGrid">
+            <div class="photoBox">Фото 1</div>
+            <div class="photoBox">Фото 2</div>
+            <div class="photoBox">Фото 3</div>
+          </div>
+          <button class="profileBtn" style="margin-top:12px;width:100%" onclick="alert('Загрузку фотографий подключим следующим этапом')">Добавить фото</button>
+        </div>
+
+        <div class="profileCard" style="margin-top:16px">
+          <h3>Друзья</h3>
+          <div class="friendList">
+            <div class="friend"><div class="friendAvatar">С</div><span>Серый</span></div>
+            <div class="friend"><div class="friendAvatar">М</div><span>Миша</span></div>
+            <div class="friend"><div class="friendAvatar">А</div><span>Андрей</span></div>
+            <div class="friend"><div class="friendAvatar">Р</div><span>Рома</span></div>
+          </div>
+        </div>
+
+        <div class="profileCard" style="margin-top:16px">
+          <h3>Статус</h3>
+          <div style="color:#aaa">♛ <span id="profileCrownText">Обычный пользователь</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="authOverlay" id="authOverlay" onclick="if(event.target===this)closeAuth()">
+  <div class="authBox">
+    <div class="authTop">
+      <h2 id="authTitle">Вход</h2>
+      <button class="authClose" onclick="closeAuth()">×</button>
+    </div>
+    <div class="authTabs">
+      <button id="tabLogin" class="active" onclick="switchAuth('login')">Войти</button>
+      <button id="tabRegister" onclick="switchAuth('register')">Регистрация</button>
+    </div>
+
+    <form id="loginForm" class="authForm active" onsubmit="login(event)">
+      <div class="field"><label>Ник</label><input id="loginNick" maxlength="24" autocomplete="username" required placeholder="Например: Серый"></div>
+      <div class="field"><label>Пароль</label><input id="loginPassword" type="password" minlength="6" autocomplete="current-password" required placeholder="Минимум 6 символов"></div>
+      <div class="authError" id="loginError"></div>
+      <button class="cta authSubmit">Войти</button>
+      <p class="authNote">Для прототипа данные сохраняются только в этом браузере. Пароль не отправляется на сервер.</p>
+    </form>
+
+    <form id="registerForm" class="authForm" onsubmit="register(event)">
+      <div class="field"><label>Ник</label><input id="regNick" maxlength="24" autocomplete="username" required placeholder="Придумай свой ник"></div>
+      <div class="field"><label>Пароль</label><input id="regPassword" type="password" minlength="6" autocomplete="new-password" required placeholder="Минимум 6 символов"></div>
+      <div class="field"><label>Повтори пароль</label><input id="regPassword2" type="password" minlength="6" autocomplete="new-password" required placeholder="Ещё раз"></div>
+      <div class="authError" id="registerError"></div>
+      <button class="cta authSubmit">Создать аккаунт</button>
+      <p class="authNote">Это первый этап. В полноценной версии аккаунты будут храниться в защищённой серверной базе.</p>
+    </form>
+  </div>
+</div>
+
+<div class="mobileNav"><button>⌂<br>Главная</button><button>♙<br>Люди</button><button>✉<br>Чат</button><button>♛<br>Профиль</button></div>
+
+<script>
+const USERS_KEY='kpzh_users_v1';
+const SESSION_KEY='kpzh_session_v1';
+
+function getUsers(){ try{return JSON.parse(localStorage.getItem(USERS_KEY)||'[]')}catch(e){return []} }
+function saveUsers(users){localStorage.setItem(USERS_KEY,JSON.stringify(users))}
+function currentUser(){const nick=localStorage.getItem(SESSION_KEY);return getUsers().find(u=>u.nick===nick)||null}
+
+function openAuth(mode='login'){
+ document.getElementById('authOverlay').classList.add('show');
+ switchAuth(mode);
+}
+function closeAuth(){document.getElementById('authOverlay').classList.remove('show')}
+function switchAuth(mode){
+ const login=mode==='login';
+ document.getElementById('authTitle').textContent=login?'Вход':'Регистрация';
+ document.getElementById('loginForm').classList.toggle('active',login);
+ document.getElementById('registerForm').classList.toggle('active',!login);
+ document.getElementById('tabLogin').classList.toggle('active',login);
+ document.getElementById('tabRegister').classList.toggle('active',!login);
+ document.getElementById('loginError').textContent='';
+ document.getElementById('registerError').textContent='';
+}
+function normalizeNick(v){return v.trim().replace(/\s+/g,' ')}
+function register(e){
+ e.preventDefault();
+ const nick=normalizeNick(document.getElementById('regNick').value);
+ const pass=document.getElementById('regPassword').value;
+ const pass2=document.getElementById('regPassword2').value;
+ const err=document.getElementById('registerError');
+ if(nick.length<3){err.textContent='Ник должен быть не короче 3 символов.';return}
+ if(pass.length<6){err.textContent='Пароль должен быть не короче 6 символов.';return}
+ if(pass!==pass2){err.textContent='Пароли не совпадают.';return}
+ const users=getUsers();
+ if(users.some(u=>u.nick.toLowerCase()===nick.toLowerCase())){err.textContent='Такой ник уже занят.';return}
+ // Prototype only: real version will hash passwords server-side.
+ users.push({nick,pass,createdAt:new Date().toISOString(),donor:'none'});
+ saveUsers(users);
+ localStorage.setItem(SESSION_KEY,nick);
+ closeAuth();
+ updateUserUI();
+ alert('Аккаунт создан. Добро пожаловать, '+nick+'!');
+}
+function login(e){
+ e.preventDefault();
+ const nick=normalizeNick(document.getElementById('loginNick').value);
+ const pass=document.getElementById('loginPassword').value;
+ const err=document.getElementById('loginError');
+ const user=getUsers().find(u=>u.nick.toLowerCase()===nick.toLowerCase() && u.pass===pass);
+ if(!user){err.textContent='Неверный ник или пароль.';return}
+ localStorage.setItem(SESSION_KEY,user.nick);
+ closeAuth(); updateUserUI();
+}
+function logout(){
+ localStorage.removeItem(SESSION_KEY);
+ closeProfile();
+ updateUserUI();
+}
+function updateUserUI(){
+ const user=currentUser();
+ const area=document.getElementById('authArea');
+ const name=document.getElementById('profileName');
+ const avatar=document.getElementById('profileAvatar');
+ const status=document.getElementById('profileStatus');
+ if(user){
+   area.innerHTML='<div class="userTop"><div class="userMini">'+escapeHtml(user.nick[0].toUpperCase())+'</div><b>'+escapeHtml(user.nick)+'</b><button class="logoutBtn" onclick="logout()">Выйти</button></div>';
+   name.textContent=user.nick;
+   avatar.textContent=user.nick[0].toUpperCase();
+   status.textContent='в сети';
+ }else{
+   area.innerHTML='<button class="nav active" style="margin-left:8px" onclick="openAuth(\\'login\\')">Войти</button>';
+   name.textContent='Гость'; avatar.textContent='?'; status.textContent='не авторизован';
+ }
+}
+function openProfile(){
+ const user=currentUser();
+ if(!user){openAuth('login');return}
+ document.getElementById('profilePage').classList.add('show');
+ renderProfile();
+}
+function closeProfile(){document.getElementById('profilePage').classList.remove('show')}
+function renderProfile(){
+ const user=currentUser(); if(!user)return;
+ const avatar=document.getElementById('pageAvatar');
+ if(user.avatar){
+   avatar.innerHTML='<img src="'+user.avatar+'" alt="Аватар '+escapeHtml(user.nick)+'">';
+ }else{
+   avatar.textContent=user.nick[0].toUpperCase();
+ }
+ document.getElementById('pageNick').textContent=user.nick;
+ document.getElementById('pageOnline').textContent='В сети';
+ document.getElementById('pageDonor').textContent=user.donor==='none'?'Без статуса':user.donor;
+ document.getElementById('pageBio').textContent=user.bio||'Пользователь «КТО ПО ЖИЗНИ».';
+ document.getElementById('editBio').value=user.bio||'';
+ document.getElementById('wallAuthor').textContent=user.nick+' · сейчас';
+ document.getElementById('profileCrownText').textContent=user.donor==='none'?'Обычный пользователь':'♛ '+user.donor;
+}
+function uploadAvatar(event){
+ const file=event.target.files && event.target.files[0];
+ const user=currentUser();
+ if(!file || !user)return;
+ if(!file.type.match(/^image\/(png|jpeg|webp)$/)){
+   alert('Можно загрузить PNG, JPG или WEBP.');
+   event.target.value='';
+   return;
+ }
+ if(file.size>2*1024*1024){
+   alert('Аватар слишком большой. Максимальный размер — 2 МБ.');
+   event.target.value='';
+   return;
+ }
+ const reader=new FileReader();
+ reader.onload=function(){
+   const users=getUsers();
+   const i=users.findIndex(u=>u.nick===user.nick);
+   if(i<0)return;
+   users[i].avatar=reader.result;
+   saveUsers(users);
+   renderProfile();
+   updateUserUI();
+ };
+ reader.readAsDataURL(file);
+}
+
+function toggleProfileEdit(){
+ const box=document.getElementById('profileEdit');
+ box.classList.toggle('show');
+}
+function saveProfile(){
+ const users=getUsers(), user=currentUser(); if(!user)return;
+ const bio=document.getElementById('editBio').value.trim();
+ const i=users.findIndex(u=>u.nick===user.nick);
+ if(i>=0){users[i].bio=bio;saveUsers(users);renderProfile();toggleProfileEdit()}
+}
+function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+function send(e){
+ e.preventDefault();
+ const user=currentUser();
+ if(!user){openAuth('login');return}
+ const input=document.getElementById('input'), value=input.value.trim();
+ if(!value)return;
+ const box=document.getElementById('messages');
+ const row=document.createElement('div'); row.className='msg me';
+ row.innerHTML='<div class="mini">'+escapeHtml(user.nick[0].toUpperCase())+'</div><div><div class="meta">'+escapeHtml(user.nick)+' · сейчас</div><div class="bubble"><p></p></div></div>';
+ row.querySelector('p').textContent=value; box.appendChild(row); input.value=''; box.scrollTop=box.scrollHeight;
+}
+updateUserUI();
+if(currentUser()) renderProfile();
+</script>
+</body>
+</html>

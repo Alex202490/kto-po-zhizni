@@ -1,0 +1,72 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><title>КТО ПО ЖИЗНИ</title><link rel="stylesheet" href="style.css?v=105"></head><body>
+<div id="siteBackdrop" aria-hidden="true"></div>
+<div class="scene" aria-hidden="true"><div class="wire"></div><div class="tower"></div><div class="wallquote q1">СВОБОДА<br>НЕ В МЕСТЕ,<br>А В ГОЛОВЕ...</div><div class="wallquote q2">ВОР —<br>НЕ ПРИГОВОР,<br>А СОСТОЯНИЕ<br>ДУШИ...</div></div>
+<div class="shell">
+<section class="masthead"><div class="brandCrown">♛</div><h1>КТО ПО ЖИЗНИ</h1><p>Чат для своих</p></section>
+<header class="topbar"><nav id="mainNav"><button data-view="home">⌂ <span>Главная</span></button><button class="active" data-view="chat">▣ <span>Чат</span></button><button data-view="users">♟ <span>Пользователи</span></button><button data-view="profile">● <span>Профиль</span></button></nav><div class="topActions"><div class="noticeWrap"><button class="bell" id="bellBtn" title="Уведомления">🔔<b id="noticeCount">0</b></button><div class="noticeMenu" id="noticeMenu"><strong>Уведомления</strong><div id="noticeFeed"><div class="noticeEmpty">Новых событий пока нет</div></div></div></div><button class="supportBtn" id="supportBtn">♛ Поддержать проект</button><div id="authArea"></div></div></header>
+<main>
+<section class="view" id="view-home">
+  <div class="homeHero communityHero">
+    <div class="homeHeroCopy">
+      <span class="eyebrow">СВОИ ЛЮДИ · НАСТОЯЩИЙ РАЗГОВОР</span>
+      <h2 class="heroTitle"><span>ЗДЕСЬ ЦЕНЯТ ЛЮДЕЙ,</span><span>А НЕ СЛОВА.</span></h2>
+      <p>Настоящее общение, жизненные истории, поддержка и уважение. Здесь свои — для своих. Без лишнего шума, с открытым разговором и по-человечески.</p>
+      <button class="primary" data-view="chat">♟ Присоединяйся к своим →</button>
+    </div>
+  </div>
+  <div class="homeCards four">
+    <article><i>💬</i><b>ОБЩЕНИЕ</b><p>Живой чат по важным темам. Делимся мыслями и опытом.</p></article>
+    <article><i>👥</i><b>СВОИ ЛЮДИ</b><p>Участники, которые понимают и уважают друг друга.</p></article>
+    <article><i>◆</i><b>ПОДДЕРЖКА</b><p>Вместе проще. Всегда найдётся тот, кто выслушает и даст совет.</p></article>
+    <article><i>▥</i><b>РАЗВИТИЕ</b><p>Опыт, истории, мысли и взгляд на жизнь без лишних слов.</p></article>
+  </div>
+  <div class="homeQuote"><strong>«Настоящие разговоры делают нас сильнее.»</strong></div>
+</section>
+<section class="view active" id="view-chat"><div class="layout"><aside class="leftPanel panel"><div class="panelTitle"><b>Онлайн (<span id="onlineCount">0</span>)</b><span class="onlineDot">● <i id="onlineCount2">0</i></span></div><div class="tabs" id="peopleTabs"><button class="active" data-filter="all">Все</button><button data-filter="friends">Друзья</button><button data-filter="donors">Донатеры ♛</button></div><div class="search"><input id="userSearch" placeholder="Поиск пользователей..."></div><div id="onlineUsers" class="people"></div><button class="showAll" data-view="users">Показать всех →</button></aside>
+<section class="chatPanel panel"><div class="panelTitle chatHead"><div><b id="chatTitle">🔴 Общий чат</b><small id="chatSubtitle">#общение · общий разговор</small></div><button class="tiny" id="backToGeneral" hidden>← В общий чат</button></div><div class="pinned" id="chatPinned">📌 <b>Закреплено:</b> Уважайте друг друга. Без оскорблений.</div><div class="messages" id="messages"><div class="empty">После подключения базы здесь появятся сообщения всех пользователей.</div></div><div class="typing" id="typingIndicator"></span></div><div class="replyPreview" id="replyPreview" hidden><div><b>Ответ</b><span id="replyText"></span></div><button type="button" id="cancelReply">×</button></div><form class="composer" id="composer"><button type="button" class="iconBtn" id="emojiBtn" title="Добавить эмодзи">☺</button><input id="messageInput" maxlength="500" placeholder="Написать сообщение..." autocomplete="off"><span class="charCount" id="charCount">0/500</span><button class="send" title="Отправить">➤</button></form></section>
+<aside class="rightCol"><section class="panel profileWidget"><div class="panelTitle"><b>⚙ Мой профиль</b><button class="tiny" data-view="profile">Редактировать</button></div><div class="profileRow"><div class="avatar big" id="widgetAvatar">?</div><div><h3 id="widgetNick">Гость</h3><div class="onlineText">● <span id="widgetOnline">не авторизован</span></div></div></div><div class="stats"><div><span>Сообщений</span><b id="messageStat">0</b></div><div><span>Поддержка</span><b id="supportStat">0 ₽</b></div><div><span>Статус</span><b id="tierStat">—</b></div></div></section>
+<section class="panel donorPanel"><div class="panelTitle"><b>♛ Ступени донатеров</b></div><div class="donor authority"><i>♛</i><div><b>АВТОРИТЕТ</b><span>От 10 000 ₽ · красно-золотая корона</span></div></div><div class="donor gold"><i>♛</i><div><b>БЛАТНОЙ</b><span>От 5 000 ₽ · золотая корона</span></div></div><div class="donor silver"><i>♛</i><div><b>СТАРШИЙ</b><span>От 500 ₽ · серебряная корона</span></div></div><div class="donor bronze"><i>♛</i><div><b>БРОДЯГА</b><span>От 100 ₽ · бронзовая корона</span></div></div></section>
+<section class="panel"><div class="panelTitle"><b>♛ Топ донатеров</b></div><div id="donorTop" class="donorTop"><small>Появится после подключения базы.</small></div></section>
+<section class="panel adPanel"><div class="panelTitle"><b>Рекламный блок</b><span>картинка + ссылка</span></div><a id="adLink" target="_blank" rel="noopener noreferrer" aria-label="Открыть рекламное предложение"><div id="adImage" class="adImage"><span>ЗДЕСЬ МОЖЕТ БЫТЬ<br><b>ВАША РЕКЛАМА</b></span></div><div class="adCta">Открыть предложение →</div></a></section></aside></div></section>
+<section class="view" id="view-users"><div class="pageHead usersHead"><span>ЛЮДИ</span><h2>Пользователи</h2><p>Все участники сообщества. Найди своих, посмотри кто сейчас на связи и кто поддерживает проект.</p><div class="usersTools"><div class="usersSearchWrap">⌕ <input id="usersSearch" placeholder="Найти пользователя по нику"></div></div><div class="usersFilters" id="usersFilters"><button class="active" data-users-filter="all">Все</button><button data-users-filter="online">● Онлайн</button><button data-users-filter="brodyaga">♛ Бродяга</button><button data-users-filter="starshiy">♛ Старший</button><button data-users-filter="blatnoy">♛ Блатной</button><button data-users-filter="avtoritet">♛ Авторитет</button></div><div class="usersSummary"><b id="usersFound">0</b><span>участников найдено</span></div></div><div id="usersGrid" class="usersGrid"><div class="panel empty">Подключите базу, чтобы загрузить пользователей.</div></div></section>
+<section class="view" id="view-profile"><div class="profilePage">
+  <div class="profileCover" id="profileCover"><div class="coverShade"></div><div class="coverActions"><label>▣ Сменить обложку<input id="coverInput" type="file" accept="image/png,image/jpeg,image/webp"></label></div></div>
+  <div class="profileIdentityCard" id="profileIdentityCard">
+    <div class="profileAvatarWrap"><div class="avatar huge" id="profileAvatar">?</div><label class="avatarEdit" title="Сменить аватар">✎<input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp"></label></div>
+    <div class="identityText"><div class="profileNameLine"><h2 id="profileNick">Гость</h2><span class="profileCrown" id="profileCrown"></span></div><p><span class="onlineDot">●</span> <span id="profileOnline">не авторизован</span></p><div class="profileBadges"><span id="profileTier">Без статуса</span><span id="subscriptionBadge">Без подписки</span></div></div>
+    <button class="profileEditBtn" id="editProfileBtn">✎ Редактировать профиль</button>
+  </div>
+  <div class="profileStatsBar"><div><b id="profileMessageCount">0</b><span>Сообщений</span></div><div><b id="profileReputation">0</b><span>Репутация</span></div><div><b id="profileSupportTotal">0 ₽</b><span>Поддержка</span></div><div><b id="profileSince">—</b><span>На сайте</span></div></div>
+  <div class="profileGrid profileGridNew">
+    <section class="panel profileAbout"><div class="panelTitle"><b>О себе</b><span>Личная информация</span></div><div id="bioDisplay" class="bioDisplay">Пользователь пока ничего о себе не рассказал.</div><div class="profileEditor" id="profileEditor"><label>Ник<input id="nicknameEdit" maxlength="24" placeholder="Ваш ник"></label><label>О себе<textarea id="bio" maxlength="240" placeholder="Расскажи немного о себе"></textarea></label><div class="editorActions"><button class="primary" id="saveProfile">Сохранить изменения</button><button class="tiny" id="cancelProfileEdit" type="button">Отмена</button></div></div></section>
+    <aside class="profileSideStack"><section class="panel rankCard" id="rankCard"><div class="panelTitle"><b>Мой статус</b></div><div class="rankCrown" id="rankCrown">♛</div><h3 id="tierInfo">Без донатерского статуса</h3><p id="rankDescription">Поддержите проект, чтобы получить особый знак рядом с ником.</p><div class="rankProgress"><div id="rankProgressFill"></div></div><small id="rankNext">До первого статуса — 100 ₽</small><button class="supportBtn wide" id="supportBtn2">♛ Поддержать проект</button></section><section class="panel profileRules"><div class="panelTitle"><b>Оформление профиля</b></div><p>Аватар и обложка: PNG, JPG или WEBP до 5 МБ.</p><p>У Старшего, Блатного и Авторитета активная подписка включает светящуюся рамку.</p></section></aside>
+  </div>
+</div></section>
+</main></div>
+
+<div class="modal" id="userProfileModal"><div class="userProfilePopup panel"><button class="close" id="userProfileClose">×</button><div class="userPopupCover"></div><div class="userPopupIdentity"><div id="userPopupAvatar"></div><div><div class="userPopupName"><h2 id="userPopupNick">Пользователь</h2><span id="userPopupCrown"></span></div><p id="userPopupOnline">● статус</p></div></div><div class="userPopupBadges"><span id="userPopupTier"></span><span id="userPopupSubscription"></span></div><p class="userPopupBio" id="userPopupBio"></p><div class="userPopupStats"><div><b id="userPopupMessages">0</b><span>Сообщений</span></div><div><b id="userPopupRep">0</b><span>Репутация</span></div><div><b id="userPopupSupport">0 ₽</b><span>Поддержка</span></div></div><div class="userPopupActions"><button class="primary" id="userPopupMessage">💬 Написать</button><button id="userPopupFriend">＋ Добавить в друзья</button></div><small class="demoHint"></small></div></div>
+<div class="modal" id="authModal"><div class="authBox"><button class="close" id="authClose">×</button><h2>Вход / регистрация</h2><input id="nickname" maxlength="24" autocomplete="username" placeholder="Ник"><input id="password" type="password" minlength="6" maxlength="72" autocomplete="current-password" placeholder="Пароль"><input id="passwordRepeat" type="password" minlength="6" maxlength="72" autocomplete="new-password" placeholder="Повторите пароль — для регистрации"><div class="authButtons"><button id="loginBtn">Войти</button><button class="primary" id="registerBtn">Создать аккаунт</button></div><p id="authMsg"></p><small class="authHint">Без e-mail и SMS. Для входа запомните ник и пароль.</small></div></div>
+<div class="modal" id="supportModal"><div class="authBox"><button class="close" id="supportClose">×</button><h2>Поддержать проект</h2><p class="muted">Разовая поддержка повышает общую сумму и статус. Активная ежемесячная подписка дополнительно включает светящуюся рамку у Старшего, Блатного и Авторитета.</p><div class="payMode"><button class="active" data-paymode="once">Разовый платёж</button><button data-paymode="monthly">Ежемесячно</button></div><div class="supportLevels"><button data-amount="100"><b>♛ Бродяга</b><span>от 100 ₽</span></button><button data-amount="500"><b>♛ Старший</b><span>от 500 ₽ · серебряная рамка по подписке</span></button><button data-amount="5000"><b>♛ Блатной</b><span>от 5 000 ₽ · золотая рамка по подписке</span></button><button data-amount="10000"><b>♛ Авторитет</b><span>от 10 000 ₽ · красно-золотая рамка по подписке</span></button></div><div class="donationDemo"><button class="tiny" id="demoDonationBtn">♛ Показать демо донат-оповещения</button><small>Это только демонстрация внешнего вида — платёж не создаётся.</small></div><p class="paymentNote">Оплата станет активной после подключения платёжного провайдера и серверного webhook.</p></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script src="app.js?v=105"></script><div class="donationSignals" id="donationSignals" aria-live="polite"></div>
+
+<div id="avatarCropModal" class="avatarCropModal" aria-hidden="true">
+  <div class="avatarCropCard" role="dialog" aria-modal="true" aria-labelledby="avatarCropTitle">
+    <div class="avatarCropHead">
+      <div><b id="avatarCropTitle">Настроить аватар</b><small>Перетащите фото и выберите масштаб</small></div>
+      <button type="button" id="avatarCropClose" class="avatarCropClose" aria-label="Закрыть">×</button>
+    </div>
+    <div id="avatarCropStage" class="avatarCropStage">
+      <img id="avatarCropImage" alt="">
+      <div class="avatarCropMask" aria-hidden="true"></div>
+    </div>
+    <label class="avatarZoomLabel">Масштаб
+      <input id="avatarCropZoom" type="range" min="1" max="3" step="0.01" value="1">
+    </label>
+    <div class="avatarCropActions">
+      <button type="button" id="avatarCropCancel" class="btn ghost">Отмена</button>
+      <button type="button" id="avatarCropSave" class="btn primary">Сохранить аватар</button>
+    </div>
+  </div>
+</div>
+
+</body></html>
