@@ -837,8 +837,306 @@ html body #avatarEditorModal .avatarEditorStage{
  html body #avatarEditorModal .avatarEditorCard{width:calc(100vw - 16px)!important;max-height:calc(100dvh - 16px)!important}
 }
 
-/* v105 — desktop chat height only: extend message area downward */
-@media (min-width: 901px){
-  .chatPanel{min-height:820px}
-  .chatPanel .messages{max-height:690px}
+/* v105 — critical auth/support modal viewport fix */
+html body #authModal.modal,
+html body #supportModal.modal{
+  display:none !important;
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100dvh !important;
+  margin:0 !important;
+  padding:18px !important;
+  z-index:20000 !important;
+  background:rgba(0,0,0,.82) !important;
+  backdrop-filter:blur(7px);
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:auto !important;
+  transform:none !important;
+}
+html body #authModal.modal.show,
+html body #supportModal.modal.show{display:flex !important}
+html body #authModal.modal .authBox,
+html body #supportModal.modal .authBox{
+  position:relative !important;
+  width:min(440px,calc(100vw - 36px)) !important;
+  max-height:calc(100dvh - 36px) !important;
+  margin:auto !important;
+  overflow:auto !important;
+  flex:0 0 auto !important;
+}
+@media(max-width:760px){
+  html body #authModal.modal,
+  html body #supportModal.modal{align-items:center !important;padding:10px !important}
+  html body #authModal.modal .authBox,
+  html body #supportModal.modal .authBox{
+    width:calc(100vw - 20px) !important;
+    max-height:calc(100dvh - 20px) !important;
+    border-radius:12px !important;
+    padding-bottom:24px !important;
+  }
+}
+
+/* v106 — donation toast must stay in viewport and above open modals */
+html body #donationSignals.donationSignals{
+  position:fixed!important;
+  top:82px!important;
+  right:24px!important;
+  bottom:auto!important;
+  left:auto!important;
+  width:min(390px,calc(100vw - 32px))!important;
+  height:auto!important;
+  margin:0!important;
+  z-index:2147483100!important;
+  display:grid!important;
+  gap:10px!important;
+  pointer-events:none!important;
+  transform:none!important;
+}
+html body #donationSignals .donationSignal{pointer-events:none!important}
+@media(max-width:700px){
+  html body #donationSignals.donationSignals{
+    top:70px!important;
+    right:12px!important;
+    width:calc(100vw - 24px)!important;
+  }
+}
+
+/* v107 — isolated avatar drag stability fix */
+#avatarEditorModal .avatarEditorStage,
+#avatarEditorModal #avatarEditorCanvas{
+  touch-action:none;
+  overscroll-behavior:contain;
+  -webkit-user-select:none;
+  user-select:none;
+}
+#avatarEditorModal #avatarEditorCanvas{cursor:grab}
+#avatarEditorModal #avatarEditorCanvas:active{cursor:grabbing}
+
+/* v108 isolated cover editor */
+#coverEditorModal[hidden]{display:none!important}
+#coverEditorModal{position:fixed!important;inset:0!important;z-index:10050!important;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(5,5,7,.82);backdrop-filter:blur(5px)}
+#coverEditorModal .coverEditorCard{width:min(760px,96vw);max-height:94vh;overflow:auto;background:linear-gradient(180deg,#171719,#0e0e10);border:1px solid rgba(183,64,37,.7);border-radius:16px;padding:14px;box-shadow:0 24px 70px rgba(0,0,0,.65)}
+#coverEditorModal .coverEditorHead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+#coverEditorModal #coverEditorClose{border:0;background:transparent;color:#ddd;font-size:28px;cursor:pointer}
+#coverEditorModal .coverEditorStage{width:100%;aspect-ratio:20/7;background:#080808;border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.08);touch-action:none;overscroll-behavior:contain}
+#coverEditorModal #coverEditorCanvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}
+#coverEditorModal #coverEditorCanvas:active{cursor:grabbing}
+#coverEditorModal .coverEditorHint{font-size:12px;color:#aaa;text-align:center;margin:9px 0}
+#coverEditorModal .coverEditorZoom{display:flex;gap:12px;align-items:center;font-size:13px;color:#ccc}.coverEditorZoom input{flex:1}
+#coverEditorModal .coverEditorActions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+#coverEditorModal .coverEditorActions button{border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:9px 13px;background:#222;color:#eee;cursor:pointer}
+#coverEditorModal #coverEditorSave{background:linear-gradient(180deg,#8d321f,#612014);border-color:#b34d31;font-weight:700}
+@media(max-width:600px){#coverEditorModal{padding:10px}#coverEditorModal .coverEditorCard{padding:11px}#coverEditorModal .coverEditorActions{display:grid;grid-template-columns:1fr 1fr}}
+
+/* v118 — mobile: hide Users filter scrollbar */
+@media (max-width:700px){
+  .usersFilters{
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .usersFilters::-webkit-scrollbar{
+    display:none;
+    width:0;
+    height:0;
+  }
+}
+
+/* v118 — mobile chat shell: only the middle messages area scrolls */
+@media (max-width:700px){
+  #view-chat .chatPanel{
+    height:calc(100dvh - 64px);
+    min-height:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+  }
+
+  #view-chat .chatPanel .chatHead,
+  #view-chat .chatPanel .pinned,
+  #view-chat .chatPanel .typing,
+  #view-chat .chatPanel .replyPreview{
+    flex:0 0 auto;
+  }
+
+  #view-chat .chatPanel .messages{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+    overscroll-behavior-y:contain;
+    padding-bottom:16px!important;
+  }
+
+  #view-chat .chatPanel .composer{
+    position:fixed!important;
+    left:0;
+    right:0;
+    bottom:0!important;
+    width:100%;
+    z-index:120;
+    box-sizing:border-box;
+    margin:0!important;
+    padding:9px max(12px,env(safe-area-inset-right))
+            calc(9px + env(safe-area-inset-bottom))
+            max(12px,env(safe-area-inset-left));
+    background:rgba(7,10,12,.99);
+    border-top:1px solid #293034;
+    box-shadow:0 -8px 24px rgba(0,0,0,.42);
+  }
+
+  /* Reserve real space for the fixed composer so messages never pass behind it. */
+  #view-chat .chatPanel{
+    padding-bottom:calc(76px + env(safe-area-inset-bottom));
+    box-sizing:border-box;
+  }
+}
+
+/* v119 — mobile-only support strip above bottom navigation */
+.mobileSupportBar{display:none}
+@media(max-width:760px){
+  .mobileSupportBar{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:calc(64px + env(safe-area-inset-bottom));
+    z-index:39;
+    height:52px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 12px;
+    border:1px solid rgba(143,37,43,.78);
+    border-bottom-color:rgba(90,24,28,.9);
+    border-radius:10px 10px 0 0;
+    background:linear-gradient(180deg,rgba(34,18,19,.98),rgba(13,12,14,.99));
+    box-shadow:0 -8px 24px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.035);
+    color:#e5e0da;
+    text-align:left;
+    box-sizing:border-box;
+  }
+  .mobileSupportCrown{
+    flex:0 0 auto;
+    font-size:25px;
+    line-height:1;
+    color:#c79b55;
+    text-shadow:0 0 12px rgba(199,155,85,.22);
+  }
+  .mobileSupportBar>span:nth-child(2){
+    min-width:0;
+    display:flex;
+    flex:1;
+    flex-direction:column;
+    gap:1px;
+  }
+  .mobileSupportBar b{
+    font-size:11px;
+    letter-spacing:.8px;
+    line-height:1.2;
+  }
+  .mobileSupportBar small{
+    color:#8f9699;
+    font-size:9px;
+    line-height:1.2;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .mobileSupportBar i{
+    font-style:normal;
+    color:#a8adaf;
+    font-size:24px;
+    line-height:1;
+  }
+  /* Only reserve room for the new strip; existing elements keep their geometry. */
+  main{padding-bottom:calc(136px + env(safe-area-inset-bottom))!important}
+  #view-chat .chatPanel{
+    padding-bottom:calc(128px + env(safe-area-inset-bottom))!important;
+  }
+}
+
+/* v120 — support strip moved to the top on mobile, under navigation */
+@media(max-width:760px){
+  .mobileSupportBar{
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+    width:calc(100% - 20px)!important;
+    height:50px!important;
+    margin:8px 10px 6px!important;
+    z-index:2!important;
+    border-radius:9px!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035)!important;
+  }
+
+  /* v119 reserved bottom room for the fixed strip; no longer needed. */
+  main{
+    padding-bottom:calc(82px + env(safe-area-inset-bottom))!important;
+  }
+  #view-chat .chatPanel{
+    padding-bottom:calc(76px + env(safe-area-inset-bottom))!important;
+  }
+}
+
+/* v121 — keep support strip everywhere except the general chat */
+@media(max-width:760px){
+  body:has(#view-chat.active) .mobileSupportBar{
+    display:none!important;
+  }
+
+  /* General chat: reserve a hard bottom lane for the fixed composer.
+     Messages scroll only in the middle and cannot sit behind the composer. */
+  #view-chat .chatPanel{
+    height:calc(100dvh - 118px)!important;
+    min-height:0!important;
+    padding-bottom:calc(88px + env(safe-area-inset-bottom))!important;
+    overflow:hidden!important;
+    box-sizing:border-box!important;
+  }
+  #view-chat .chatPanel .messages{
+    flex:1 1 auto!important;
+    min-height:0!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    padding-bottom:24px!important;
+    scroll-padding-bottom:24px!important;
+  }
+  #view-chat .chatPanel .composer{
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    z-index:120!important;
+  }
+}
+
+/* v122 — mobile admin moderation button stays reachable */
+@media(max-width:760px){
+  .adminNavBtn{
+    position:fixed!important;
+    right:10px!important;
+    bottom:calc(72px + env(safe-area-inset-bottom))!important;
+    z-index:1000!important;
+    width:auto!important;
+    max-width:150px!important;
+    min-height:38px!important;
+    padding:7px 10px!important;
+    margin:0!important;
+    border-radius:9px!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    white-space:nowrap!important;
+    box-shadow:0 8px 24px rgba(0,0,0,.48)!important;
+  }
+  body:has(#view-chat.active) .adminNavBtn{
+    bottom:calc(92px + env(safe-area-inset-bottom))!important;
+  }
 }

@@ -67,10 +67,28 @@ function ensureAvatarEditor(){
  modal.addEventListener('click',e=>{if(e.target===modal)close()});
  const canvas=modal.querySelector('#avatarEditorCanvas');
  const point=e=>{const t=e.touches?.[0]||e,r=canvas.getBoundingClientRect();return{x:(t.clientX-r.left)*canvas.width/r.width,y:(t.clientY-r.top)*canvas.height/r.height}};
- const down=e=>{if(!avatarEditor.img)return;avatarEditor.drag=true;avatarEditor.last=point(e);e.preventDefault()};
- const move=e=>{if(!avatarEditor.drag)return;const p=point(e);avatarEditor.x+=p.x-avatarEditor.last.x;avatarEditor.y+=p.y-avatarEditor.last.y;avatarEditor.last=p;drawAvatarEditor();e.preventDefault()};
- const up=()=>avatarEditor.drag=false;
- canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);window.addEventListener('pointerup',up);
+ const down=e=>{
+  if(!avatarEditor.img)return;
+  avatarEditor.drag=true;avatarEditor.last=point(e);
+  try{canvas.setPointerCapture?.(e.pointerId)}catch(_){}
+  e.preventDefault();e.stopPropagation();
+ };
+ const move=e=>{
+  if(!avatarEditor.drag||!avatarEditor.last)return;
+  const p=point(e);
+  avatarEditor.x+=p.x-avatarEditor.last.x;avatarEditor.y+=p.y-avatarEditor.last.y;
+  avatarEditor.last=p;drawAvatarEditor();
+  e.preventDefault();e.stopPropagation();
+ };
+ const up=e=>{
+  avatarEditor.drag=false;avatarEditor.last=null;
+  try{if(e?.pointerId!=null&&canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId)}catch(_){}
+ };
+ canvas.addEventListener('pointerdown',down);
+ canvas.addEventListener('pointermove',move);
+ canvas.addEventListener('pointerup',up);
+ canvas.addEventListener('pointercancel',up);
+ canvas.addEventListener('lostpointercapture',up);
  modal.querySelector('#avatarEditorZoom').oninput=e=>{avatarEditor.zoom=+e.target.value;drawAvatarEditor()};
  modal.querySelector('[data-ae-save]').onclick=saveAvatarEditor;
  return modal;
@@ -86,6 +104,44 @@ function drawAvatarEditor(){
  avatarEditor.y=Math.max(-maxY,Math.min(maxY,avatarEditor.y));
  ctx.drawImage(img,(w-dw)/2+avatarEditor.x,(h-dh)/2+avatarEditor.y,dw,dh);
 }
+
+const coverEditor={img:null,x:0,y:0,zoom:1,drag:false,last:null};
+function ensureCoverEditor(){
+ if(document.getElementById('coverEditorModal'))return;
+ const modal=document.createElement('div');modal.id='coverEditorModal';modal.hidden=true;
+ modal.innerHTML=`<div class="coverEditorCard" role="dialog" aria-modal="true"><div class="coverEditorHead"><b>Настроить обложку</b><button type="button" id="coverEditorClose">×</button></div><div class="coverEditorStage"><canvas id="coverEditorCanvas" width="1200" height="420"></canvas></div><div class="coverEditorHint">Перетащи фото в нужное положение</div><label class="coverEditorZoom">Масштаб <input id="coverEditorZoom" type="range" min="1" max="3" step="0.01" value="1"></label><div class="coverEditorActions"><button type="button" id="coverEditorCancel">Отмена</button><button type="button" id="coverEditorSave">Сохранить обложку</button></div></div>`;
+ document.body.appendChild(modal);
+ const canvas=modal.querySelector('#coverEditorCanvas');
+ const point=e=>{const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*canvas.width/r.width,y:(e.clientY-r.top)*canvas.height/r.height}};
+ const down=e=>{if(!coverEditor.img)return;coverEditor.drag=true;coverEditor.last=point(e);try{canvas.setPointerCapture?.(e.pointerId)}catch(_){}e.preventDefault();e.stopPropagation()};
+ const move=e=>{if(!coverEditor.drag||!coverEditor.last)return;const p=point(e);coverEditor.x+=p.x-coverEditor.last.x;coverEditor.y+=p.y-coverEditor.last.y;coverEditor.last=p;drawCoverEditor();e.preventDefault();e.stopPropagation()};
+ const up=e=>{coverEditor.drag=false;coverEditor.last=null;try{if(e?.pointerId!=null&&canvas.hasPointerCapture?.(e.pointerId))canvas.releasePointerCapture(e.pointerId)}catch(_){}};
+ canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);canvas.addEventListener('lostpointercapture',up);
+ modal.querySelector('#coverEditorZoom').addEventListener('input',e=>{coverEditor.zoom=Number(e.target.value)||1;drawCoverEditor()});
+ modal.querySelector('#coverEditorClose').onclick=closeCoverEditor;modal.querySelector('#coverEditorCancel').onclick=closeCoverEditor;modal.querySelector('#coverEditorSave').onclick=saveCoverEditor;
+ modal.addEventListener('click',e=>{if(e.target===modal)closeCoverEditor()});
+}
+function drawCoverEditor(){
+ const canvas=document.getElementById('coverEditorCanvas'),img=coverEditor.img;if(!canvas||!img)return;
+ const ctx=canvas.getContext('2d'),cw=canvas.width,ch=canvas.height,base=Math.max(cw/img.naturalWidth,ch/img.naturalHeight),scale=base*coverEditor.zoom,w=img.naturalWidth*scale,h=img.naturalHeight*scale;
+ const maxX=Math.max(0,(w-cw)/2),maxY=Math.max(0,(h-ch)/2);coverEditor.x=Math.max(-maxX,Math.min(maxX,coverEditor.x));coverEditor.y=Math.max(-maxY,Math.min(maxY,coverEditor.y));
+ ctx.clearRect(0,0,cw,ch);ctx.drawImage(img,(cw-w)/2+coverEditor.x,(ch-h)/2+coverEditor.y,w,h);
+}
+function openCoverEditor(file){
+ if(!isViewingOwnProfile())return alert('Редактировать обложку можно только в своём профиле.');
+ if(!file||!/^image\/(png|jpeg|webp)$/.test(file.type))return alert('Используйте PNG, JPG или WEBP.');
+ ensureCoverEditor();const img=new Image(),url=URL.createObjectURL(file);
+ img.onload=()=>{URL.revokeObjectURL(url);coverEditor.img=img;coverEditor.x=0;coverEditor.y=0;coverEditor.zoom=1;document.getElementById('coverEditorZoom').value='1';document.getElementById('coverEditorModal').hidden=false;drawCoverEditor()};
+ img.onerror=()=>{URL.revokeObjectURL(url);alert('Не удалось открыть изображение.')};img.src=url;
+}
+function closeCoverEditor(){const m=document.getElementById('coverEditorModal');if(m)m.hidden=true;coverEditor.img=null;coverEditor.drag=false;coverEditor.last=null}
+async function saveCoverEditor(){
+ if(!isViewingOwnProfile())return closeCoverEditor();const canvas=document.getElementById('coverEditorCanvas');if(!canvas||!coverEditor.img)return;
+ const btn=document.getElementById('coverEditorSave');if(btn)btn.disabled=true;
+ try{const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('blob')),'image/jpeg',0.88));const edited=new File([blob],`cover-${Date.now()}.jpg`,{type:'image/jpeg'});edited.__coverEdited=true;closeCoverEditor();await upload('cover',edited)}
+ catch(e){console.error(e);alert('Не удалось подготовить обложку.')}finally{if(btn)btn.disabled=false}
+}
+
 function openAvatarEditor(file){if(!isViewingOwnProfile()){const inp=$('#avatarInput');if(inp)inp.value='';return}
  if(!file||!file.type.startsWith('image/'))return alert('Выбери изображение.');
  if(file.size>8*1024*1024)return alert('Исходная фотография слишком большая. Максимум 8 МБ.');
@@ -174,7 +230,7 @@ function glowClass(p={}){const s=tierSlug(p.donation_total||0);return `tier-${s}
 function avatarHTML(p,size=''){return `<div class="avatar ${size}">${p?.avatar_url?`<img src="${esc(p.avatar_url)}" alt="">`:esc((p?.nickname||'?')[0].toUpperCase())}</div>`}
 function setView(name){$$('.view').forEach(v=>v.classList.remove('active'));$('#view-'+name)?.classList.add('active');$$('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name==='profile'&&!me&&ready){openAuth();setView('chat');return}if(name==='profile'){viewedProfile=null;if(me)loadProfile().then(()=>{renderProfile();renderAuth();renderProfileWidget()});else renderProfile();}if(name==='users')renderUsers(profiles);window.scrollTo({top:0,behavior:'smooth'})}$$('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
 function openAuth(){if(!ready){alert('Сейчас сайт работает в демонстрационном режиме. Реальная регистрация включится после подключения базы.');return}$('#authModal').classList.add('show')}$('#authClose').onclick=()=>$('#authModal').classList.remove('show');
-let payMode='once';function openSupport(){$('#supportModal').classList.add('show')}$('#supportClose').onclick=()=>$('#supportModal').classList.remove('show');$('#supportBtn').onclick=openSupport;$('#supportBtn2').onclick=openSupport;$$('[data-paymode]').forEach(b=>b.onclick=()=>{payMode=b.dataset.paymode;$$('[data-paymode]').forEach(x=>x.classList.toggle('active',x===b))});$$('.supportLevels button').forEach(b=>b.onclick=()=>{const label=payMode==='monthly'?'ежемесячная подписка':'разовая поддержка';alert('Выбрано: '+label+' от '+b.dataset.amount+' ₽. Для настоящего списания нужно подключить платёжного провайдера и webhook.')});
+let payMode='once';function openSupport(){$('#supportModal').classList.add('show')}$('#supportClose').onclick=()=>$('#supportModal').classList.remove('show');$('#supportBtn').onclick=openSupport;$('#supportBtn2').onclick=openSupport;const mobileSupportBtn=$('#mobileSupportBtn');if(mobileSupportBtn)mobileSupportBtn.onclick=openSupport;$$('[data-paymode]').forEach(b=>b.onclick=()=>{payMode=b.dataset.paymode;$$('[data-paymode]').forEach(x=>x.classList.toggle('active',x===b))});$$('.supportLevels button').forEach(b=>b.onclick=()=>{const label=payMode==='monthly'?'ежемесячная подписка':'разовая поддержка';alert('Выбрано: '+label+' от '+b.dataset.amount+' ₽. Для настоящего списания нужно подключить платёжного провайдера и webhook.')});
 function renderAd(){const ad=cfg.advertising||{};$('#adLink').href=ad.link||'#';if(ad.image){$('#adImage').style.backgroundImage=`linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.35)),url('${ad.image}')`;$('#adImage').innerHTML=''}}renderAd();
 async function refreshSession(){
   if(!sb)return renderAuth();
@@ -271,7 +327,7 @@ function renderProfile(){setupProfileTools();updateAdminUI();const p=viewedProfi
  if(deleteAvatar)deleteAvatar.hidden=!own;
  if(deleteCover)deleteCover.hidden=!own;
  const editor=$('#profileEditor');if(editor&&!own)editor.classList.remove('show');const editBtn=$('#editProfileBtn')||document.querySelector('[data-edit-profile]');if(editBtn)editBtn.hidden=!own;if(own&&editBtn&&!$('#accountSettingsBtn')){const b=document.createElement('button');b.id='accountSettingsBtn';b.type='button';b.textContent='⚙ Настройки';b.className=editBtn.className;b.onclick=openAccountSettings;editBtn.insertAdjacentElement('afterend',b)}else if($('#accountSettingsBtn'))$('#accountSettingsBtn').hidden=!own;const bioInput=$('#bio');if(bioInput)bioInput.readOnly=!own;const nickInput=$('#nicknameEdit');if(nickInput)nickInput.readOnly=!own;$('#profileAvatar').innerHTML=p.avatar_url?`<img src="${esc(p.avatar_url)}">`:esc(p.nickname[0].toUpperCase());if(p.cover_url)$('#profileCover').style.backgroundImage=`linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.72)),url('${p.cover_url}')`;const levels=[100,500,5000,10000];const next=levels.find(x=>amount<x);const prev=amount>=5000?5000:amount>=500?500:amount>=100?100:0;const target=next||10000;const pct=next?Math.max(0,Math.min(100,((amount-prev)/(target-prev))*100)):100;$('#rankProgressFill').style.width=pct+'%';$('#rankNext').textContent=next?`До следующего статуса — ${(next-amount).toLocaleString('ru-RU')} ₽`:'Максимальный статус достигнут';const rc=$('#rankCrown');rc.style.fontSize=slug==='avtoritet'?'76px':slug==='blatnoy'?'64px':slug==='starshiy'?'54px':slug==='brodyaga'?'44px':'38px';rc.style.color=slug==='avtoritet'?'#ffcf42':slug==='blatnoy'?'#ffc72d':slug==='starshiy'?'#d7dde1':'#b66b3c';;enforceProfileMediaOwnership();if(viewedProfile&&me&&String(viewedProfile.id)!==String(me.id))ensureViewedProfileActions(viewedProfile);else{const va=$('#viewedProfileActions');if(va)va.hidden=true}}
-async function upload(kind,file){if(!file)return;if(!isViewingOwnProfile()){alert('Редактировать фотографии можно только в своём профиле.');return}if(!me){alert('Сессия не найдена. Войдите в аккаунт заново.');return}if(file.size>5*1024*1024){alert('Максимальный размер файла — 5 МБ.');return}if(!/^image\/(png|jpeg|webp)$/.test(file.type)){alert('Используйте PNG, JPG или WEBP.');return}const ext=file.name.split('.').pop();const path=`${me.id}/${kind}-${Date.now()}.${ext}`;const bucket=kind==='avatar'?'avatars':'covers';const max=kind==='avatar'?2*1024*1024:5*1024*1024;if(file.size>max){alert(kind==='avatar'?'Аватар — максимум 2 МБ.':'Обложка — максимум 5 МБ.');return}const {error}=await sb.storage.from(bucket).upload(path,file,{upsert:true});if(error){console.error('storage upload',error);return alert('Ошибка загрузки файла: '+error.message)}const {data}=sb.storage.from(bucket).getPublicUrl(path);const {error:updateError}=await sb.from('profiles').update({[kind==='avatar'?'avatar_url':'cover_url']:data.publicUrl}).eq('id',me.id);if(updateError){console.error('profile media update',updateError);return alert('Файл загружен, но профиль не обновился: '+updateError.message)}await loadProfile();await loadUsers();viewedProfile=null;const inp=document.getElementById(kind==='avatar'?'avatarInput':'coverInput');if(inp)inp.value='';renderProfile();renderAuth();renderProfileWidget();updateProfileMediaDeleteButtons()}
+async function upload(kind,file){if(!file)return;if(kind==='cover'&&!file.__coverEdited){openCoverEditor(file);return}if(!isViewingOwnProfile()){alert('Редактировать фотографии можно только в своём профиле.');return}if(!me){alert('Сессия не найдена. Войдите в аккаунт заново.');return}if(file.size>5*1024*1024){alert('Максимальный размер файла — 5 МБ.');return}if(!/^image\/(png|jpeg|webp)$/.test(file.type)){alert('Используйте PNG, JPG или WEBP.');return}const ext=file.name.split('.').pop();const path=`${me.id}/${kind}-${Date.now()}.${ext}`;const bucket=kind==='avatar'?'avatars':'covers';const max=kind==='avatar'?2*1024*1024:5*1024*1024;if(file.size>max){alert(kind==='avatar'?'Аватар — максимум 2 МБ.':'Обложка — максимум 5 МБ.');return}const {error}=await sb.storage.from(bucket).upload(path,file,{upsert:true});if(error){console.error('storage upload',error);return alert('Ошибка загрузки файла: '+error.message)}const {data}=sb.storage.from(bucket).getPublicUrl(path);const {error:updateError}=await sb.from('profiles').update({[kind==='avatar'?'avatar_url':'cover_url']:data.publicUrl}).eq('id',me.id);if(updateError){console.error('profile media update',updateError);return alert('Файл загружен, но профиль не обновился: '+updateError.message)}await loadProfile();await loadUsers();viewedProfile=null;const inp=document.getElementById(kind==='avatar'?'avatarInput':'coverInput');if(inp)inp.value='';renderProfile();renderAuth();renderProfileWidget();updateProfileMediaDeleteButtons()}
 $('#avatarInput').onchange=e=>{const shown=viewedProfile||profile;if(!me||!shown||String(shown.id)!==String(me.id)){e.target.value='';return}openAvatarEditor(e.target.files[0])};
 $('#coverInput').onchange=e=>{const shown=viewedProfile||profile;if(!me||!shown||String(shown.id)!==String(me.id)){e.target.value='';return}upload('cover',e.target.files[0])};$('#editProfileBtn').onclick=()=>{$('#profileEditor').classList.add('show');$('#bioDisplay').style.display='none'};$('#cancelProfileEdit').onclick=()=>{$('#profileEditor').classList.remove('show');$('#bioDisplay').style.display='block';renderProfile()};$('#saveProfile').onclick=async()=>{if(!ready){$('#bioDisplay').textContent=$('#bio').value.trim()||'Пользователь пока ничего о себе не рассказал.';$('#profileNick').textContent=$('#nicknameEdit').value.trim()||'Виталий_77';$('#profileEditor').classList.remove('show');$('#bioDisplay').style.display='block';return}if(!me)return openAuth();const nickname=$('#nicknameEdit').value.trim();if(nickname.length<3)return alert('Ник должен быть не короче 3 символов.');const {error}=await sb.from('profiles').update({nickname,bio:$('#bio').value.trim()}).eq('id',me.id);if(error)return alert(error.message);await loadProfile();renderProfile();renderAuth();renderProfileWidget();$('#profileEditor').classList.remove('show');$('#bioDisplay').style.display='block'};
 let demoMessages=DEMO_MESSAGES.map((m,i)=>({...m,id:'dm'+i,reactions:i===0?{'👊':2,'🔥':1}:i===1?{'👍':3}:{}}));let currentRows=demoMessages,replyTo=null,directUser=null;
@@ -850,6 +906,7 @@ function donationEventTitle(amount,kind){if(kind==='rank'&&amount>=10000)return 
 function showDonationSignal(ev){
  const amount=Number(ev.amount)||0, slug=donationEventTier(amount), nickname=ev.nickname||'Аноним';
  const wrap=$('#donationSignals'); if(!wrap)return;
+ if(wrap.parentElement!==document.body)document.body.appendChild(wrap);
  const card=document.createElement('div');card.className='donationSignal '+slug;
  const rank=tier(amount); const who=nickname==='Аноним'?'Аноним':esc(nickname);
  card.innerHTML=`<strong>${donationEventTitle(amount,ev.kind)}</strong><b>${who}</b> поддержал проект на <span class="signalAmount">${amount.toLocaleString('ru-RU')} ₽</span><p>${amount>=100?`Статус: ${esc(rank)} ♛`:'Спасибо за поддержку сообщества.'}</p>`;
