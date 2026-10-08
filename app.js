@@ -278,7 +278,7 @@ function validNickname(n){return n.length>=3&&n.length<=24&&/^[\p{L}\p{N}_-]+$/u
 $('#registerBtn').onclick=async()=>{
   const nickname=$('#nickname').value.trim().normalize('NFKC'),password=$('#password').value,repeat=$('#passwordRepeat').value,msg=$('#authMsg');
   if(!validNickname(nickname)){msg.textContent='Ник: 3–24 символа, только буквы, цифры, _ и -.';return}
-  if(password.length<6){msg.textContent='Пароль — минимум 6 символов.';return}
+  if(password.length<6||password.length>72){msg.textContent='Пароль — от 6 до 72 символов.';return}
   if(password!==repeat){msg.textContent='Пароли не совпадают.';return}
   msg.textContent='Создаём аккаунт…';
   try{
@@ -303,7 +303,7 @@ $('#registerBtn').onclick=async()=>{
     if(error){msg.textContent='Аккаунт создан, но автоматический вход не удался. Нажмите «Войти».';return}
     msg.textContent='Аккаунт создан. Вы вошли на сайт.';
     $('#authModal').classList.remove('show');
-    await refreshSession();await Promise.all([loadMessages(),loadUsers()]);connectPresence()
+    await refreshSession();await Promise.all([loadMessages(),loadUsers()]);connectPresence();connectDirectInbox();connectUserBlocks();connectChatPins();connectDirectMessages()
   }catch(e){msg.textContent='Нет связи с сервером регистрации.'}
 };
 $('#loginBtn').onclick=async()=>{
