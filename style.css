@@ -1188,3 +1188,15 @@ textarea:focus,input:focus-visible,button:focus-visible{
 .meta b,.pageHead span,.eyebrow,.onlineText,.onlineDot{color:#66b7f1}
 .donor.authority{border-color:#2d6aa5;background:linear-gradient(90deg,rgba(18,60,112,.45),rgba(8,18,32,.65))}
 .adImage{border-color:#2866a4}
+
+/* v124 — Slightly lighter inner surfaces, keep deep blue borders. */
+:root{--surface:#101e30;--surface2:#14253a}
+.panel,.homeCards article,.userCard,.profileIdentityCard,.profileStatsBar,
+.profileAbout,.rankCard,.profileRules,.userProfilePopup,.authBox,
+.modal .panel,.noticeMenu,.profileWidget,.chatPanel,.pinned{
+  background-color:#111f31;
+}
+.messages,.composer,.search input,.authBox input,.chatPanel textarea{
+  background-color:#142338;
+}
+.msg.me{background-color:#193758}
