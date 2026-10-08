@@ -86,7 +86,7 @@
       document.documentElement.classList.add('backend-load-failed');
       console.error('Supabase SDK unavailable');
     }
-    try{await local('config.js?v=109');await local('app.js?v=122')}
+    try{await local('config.js?v=109');await local('app.js?v=125')}
     catch(e){console.error('App bootstrap failed',e)}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
